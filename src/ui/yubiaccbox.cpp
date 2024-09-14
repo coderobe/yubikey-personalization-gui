@@ -53,7 +53,7 @@ YubiAccBox::YubiAccBox(QWidget *parent) :
     QSignalMapper *mapper = new QSignalMapper(this);
     connect(ui->configProtectionHelpBtn, SIGNAL(clicked()), mapper, SLOT(map()));
     mapper->setMapping(ui->configProtectionHelpBtn, HelpBox::Help_ConfigurationProtection);
-    connect(mapper, SIGNAL(mapped(int)), this, SIGNAL(showHelp(int)));
+    connect(mapper, SIGNAL(mappedInt(int)), this, SIGNAL(showHelp(int)));
 
     connect(YubiKeyFinder::getInstance(), SIGNAL(keyFound(bool, bool*, int)),
             this, SLOT(keyFound(bool, bool*)));

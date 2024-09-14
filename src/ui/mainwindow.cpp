@@ -219,8 +219,8 @@ void MainWindow::createPages() {
     //Connect the mapper to the pages widget
     //The mapper will set a value to each button and set that value to
     //the pages widget
-    //connect(mapper, SIGNAL(mapped(int)), ui->pagesWidget, SLOT(setCurrentIndex(int)));
-    connect(mapper, SIGNAL(mapped(int)), this, SLOT(setCurrentPage(int)));
+    //connect(mapper, SIGNAL(mappedInt(int)), ui->pagesWidget, SLOT(setCurrentIndex(int)));
+    connect(mapper, SIGNAL(mappedInt(int)), this, SLOT(setCurrentPage(int)));
 
     //Set the current page
     m_currentPage = 0;
@@ -537,7 +537,7 @@ void MainWindow::keyFound(bool found, bool* featuresMatrix, int error) {
         }
     } else {
         ui->programLbl->clear();
-        if(ui->deviceImage->pixmap()) {
+        if(!ui->deviceImage->pixmap().isNull()) {
             ui->deviceImage->setPixmap(QPixmap());
         }
         ui->deviceImage->clear();

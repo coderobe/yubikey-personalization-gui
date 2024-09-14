@@ -74,7 +74,8 @@ win32 {
 }
 
 macx:!force_pkgconfig {
-    INCLUDEPATH += ../libs/macx/include
-    CONFIG += x86_64
+    INCLUDEPATH += /opt/homebrew/include /opt/homebrew/include/ykpers-1
+    LIBS += -L/opt/homebrew/lib
+    #CONFIG += x86_64
 }
 

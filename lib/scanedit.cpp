@@ -71,7 +71,7 @@ QString ScanEdit::scanCodesToText(const QString scanCode) {
         unsigned int code = scanCode.mid(i, 2).toUInt(&ok, 16);
         if(ok == true) {
             QString key;
-            key += keyMap.key(code, 0);
+            key += (QChar)keyMap.key(code, 0);
             if(key == "\n") key = "\\n";
             if(key == "\t") key = "\\t";
             if(key == "\\") key = "\\\\";

@@ -29,7 +29,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "yubikeyutil.h"
 #include <yubikey.h>
 #include <QDebug>
-#include <QRegExp>
+#include <QRegularExpression>
 #ifdef Q_OS_WIN
 #include "crandom.h"
 #endif
@@ -175,7 +175,7 @@ void YubiKeyUtil::qstrToRaw(char *result, size_t resultLen,
 void YubiKeyUtil::qstrClean(QString *str, size_t maxSize, bool reverse) {
     *str = str->toLower();
 
-    QRegExp rx("[^0-9a-f]");
+    QRegularExpression rx("[^0-9a-f]");
     *str = str->replace(rx, QString(""));
 
     if(maxSize > 0) {
@@ -190,7 +190,7 @@ void YubiKeyUtil::qstrClean(QString *str, size_t maxSize, bool reverse) {
 void YubiKeyUtil::qstrModhexClean(QString *str, size_t maxSize, bool reverse) {
     *str = str->toLower();
 
-    QRegExp rx("[^b-lnrt-v]");
+    QRegularExpression rx("[^b-lnrt-v]");
     *str = str->replace(rx, QString(""));
 
     if(maxSize > 0) {

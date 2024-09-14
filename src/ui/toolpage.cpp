@@ -142,8 +142,8 @@ void ToolPage::connectPages() {
     //Connect the mapper to the widget
     //The mapper will set a value to each button and
     //set that value to the widget
-    //connect(pageMapper, SIGNAL(mapped(int)), this, SLOT(setCurrentIndex(int)));
-    connect(mapper, SIGNAL(mapped(int)), this, SLOT(setCurrentPage(int)));
+    //connect(pageMapper, SIGNAL(mappedInt(int)), this, SLOT(setCurrentIndex(int)));
+    connect(mapper, SIGNAL(mappedInt(int)), this, SLOT(setCurrentPage(int)));
 
     //Set the current page
     m_currentPage = 0;

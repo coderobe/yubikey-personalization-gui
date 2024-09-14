@@ -132,8 +132,8 @@ void OathPage::connectPages() {
     //Connect the mapper to the widget
     //The mapper will set a value to each button and
     //set that value to the widget
-    //connect(pageMapper, SIGNAL(mapped(int)), this, SLOT(setCurrentIndex(int)));
-    connect(mapper, SIGNAL(mapped(int)), this, SLOT(setCurrentPage(int)));
+    //connect(pageMapper, SIGNAL(mappedInt(int)), this, SLOT(setCurrentIndex(int)));
+    connect(mapper, SIGNAL(mappedInt(int)), this, SLOT(setCurrentPage(int)));
 
     //Set the current page
     m_currentPage = 0;
@@ -194,7 +194,7 @@ void OathPage::connectHelpButtons() {
     mapper->setMapping(ui->advSecretKeyHelpBtn, HelpBox::Help_SecretKey);
 
     //Connect the mapper
-    connect(mapper, SIGNAL(mapped(int)), this, SIGNAL(showHelp(int)));
+    connect(mapper, SIGNAL(mappedInt(int)), this, SIGNAL(showHelp(int)));
     connect(ui->advConfigProtectionBox, SIGNAL(showHelp(int)), this, SIGNAL(showHelp(int)));
 }
 
@@ -556,7 +556,7 @@ void OathPage::quickConfigWritten(bool written, __attribute__((unused)) const QS
         QString keyDetail("");
         if(ui->quickPubIdCheck->isChecked()) {
             QString pubIdTxt = ui->quickPrefixTxt->text() +
-                               ui->quickMUITxt->text().replace(QRegExp("\\s"), QString(""));
+                               ui->quickMUITxt->text().replace(QRegularExpression("\\s"), QString(""));
 
             keyDetail = tr(" (OATH ID: %1)").arg(pubIdTxt);
         }
@@ -1040,7 +1040,7 @@ void OathPage::advConfigWritten(bool written, const QString &msg) {
 
             QString pubIdTxt = ui->advOMPTxt->text() +
                                ui->advTTTxt->text() +
-                               ui->advMUITxt->text().replace(QRegExp("\\s"), QString(""));
+                               ui->advMUITxt->text().replace(QRegularExpression("\\s"), QString(""));
 
             keyDetail = tr(" (OATH ID: %1)").arg(pubIdTxt);
         }
@@ -1110,7 +1110,7 @@ void OathPage::advUpdateResults(bool written, const QString &msg) {
     if(ui->advPubIdCheck->isChecked() && m_ykConfig != 0) {
         pubIdTxt = ui->advOMPTxt->text() +
                    ui->advTTTxt->text() +
-                   ui->advMUITxt->text().replace(QRegExp("\\s"), QString(""));
+                   ui->advMUITxt->text().replace(QRegularExpression("\\s"), QString(""));
     } else {
         pubIdTxt = NA;
     }
@@ -1130,7 +1130,7 @@ void OathPage::advUpdateResults(bool written, const QString &msg) {
     //Timestamp...
     QDateTime timstamp = QDateTime::currentDateTime();
     QTableWidgetItem *timeItem = new QTableWidgetItem(
-            tr("%1").arg(timstamp.toString(Qt::SystemLocaleShortDate)));
+            tr("%1").arg(timstamp.toString(QLocale::system().dateFormat(QLocale::ShortFormat))));
     timeItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
     ui->advResultsWidget->setItem(row, 3, timeItem);
 

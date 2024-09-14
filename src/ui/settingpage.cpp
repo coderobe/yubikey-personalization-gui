@@ -40,7 +40,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QDebug>
 #include <QSettings>
 #include <QSignalMapper>
-#include <QRegExpValidator>
+#include <QRegularExpressionValidator>
 
 #include "common.h"
 
@@ -69,7 +69,7 @@ SettingPage::SettingPage(QWidget *parent) :
     connect(ui->updateBackBtn, SIGNAL(clicked()), mapper, SLOT(map()));
     mapper->setMapping(ui->updateBtn, Page_Update);
     mapper->setMapping(ui->updateBackBtn, Page_Base);
-    connect(mapper, SIGNAL(mapped(int)), this, SLOT(setCurrentPage(int)));
+    connect(mapper, SIGNAL(mappedInt(int)), this, SLOT(setCurrentPage(int)));
     m_currentPage = 0;
     setCurrentIndex(Page_Base);
 
@@ -102,12 +102,12 @@ SettingPage::SettingPage(QWidget *parent) :
     connect(YubiKeyFinder::getInstance(), SIGNAL(keyFound(bool, bool*, int)),
             this, SLOT(keyFound(bool, bool*)));
 
-    QRegExp modHexRx("^[cbdefghijklnrtuv]{0,4}$");
-    ui->custPrefixModhexTxt->setValidator(new QRegExpValidator(modHexRx, this));
-    QRegExp decRx("^[0-9]{0,5}$");
-    ui->custPrefixDecTxt->setValidator(new QRegExpValidator(decRx, this));
-    QRegExp hexRx("^[0-9a-f]{0,4}$");
-    ui->custPrefixHexTxt->setValidator(new QRegExpValidator(hexRx, this));
+    QRegularExpression modHexRx("^[cbdefghijklnrtuv]{0,4}$");
+    ui->custPrefixModhexTxt->setValidator(new QRegularExpressionValidator(modHexRx, this));
+    QRegularExpression decRx("^[0-9]{0,5}$");
+    ui->custPrefixDecTxt->setValidator(new QRegularExpressionValidator(decRx, this));
+    QRegularExpression hexRx("^[0-9a-f]{0,4}$");
+    ui->custPrefixHexTxt->setValidator(new QRegularExpressionValidator(hexRx, this));
 }
 
 SettingPage::~SettingPage() {
@@ -143,7 +143,7 @@ void SettingPage::connectHelpButtons() {
     mapper->setMapping(ui->logFormatEditHelpBtn, HelpBox::Help_LogFormat);
 
     //Connect the mapper
-    connect(mapper, SIGNAL(mapped(int)), this, SIGNAL(showHelp(int)));
+    connect(mapper, SIGNAL(mappedInt(int)), this, SIGNAL(showHelp(int)));
     connect(ui->configProtectionBox, SIGNAL(showHelp(int)), this, SIGNAL(showHelp(int)));
 }
 
@@ -407,9 +407,9 @@ void SettingPage::restore() {
             QMessageBox::question(
                     this, tr(RESTORE_SETTING),
                     tr(WARN_RESTORE_SETTING),
-                    tr("&Yes"), tr("&No"), QString::null, 1, 1 ))
+                    QMessageBox::Yes | QMessageBox::No))
     {
-    case 0:
+    case QMessageBox::Yes:
         restoreDefaults();
         //Reload settings
         load();

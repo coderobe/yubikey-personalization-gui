@@ -76,8 +76,8 @@ unix:!macx|force_pkgconfig {
 
 
 macx:!force_pkgconfig {
-    INCLUDEPATH += libs/macx/include
-    LIBS += ../libs/macx/lib/libyubikey.dylib
+    INCLUDEPATH += /opt/homebrew/include
+    LIBS += /opt/homebrew/lib/libyubikey.dylib
 }
 
 win32 {

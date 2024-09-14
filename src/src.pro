@@ -3,7 +3,7 @@
 #
 VERSION_MAJOR   = 3
 VERSION_MINOR   = 1
-VERSION_BUILD   = 26
+VERSION_BUILD   = 27
 VERSION         = "$${VERSION_MAJOR}.$${VERSION_MINOR}.$${VERSION_BUILD}"
 APP_NAME        = $$quote(YubiKey Personalization Tool)
 
@@ -18,7 +18,7 @@ DEFINES        += VERSION_MAJOR=\\\"$${VERSION_MAJOR}\\\" VERSION_MINOR=\\\"$${V
 
 CONFIG         += exceptions
 
-# if this is qt5, add widgets
+# if this is qt5 or better,, add widgets
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
     macx {
@@ -259,8 +259,10 @@ win32 {
 #
 # *nix specific configuration
 #
-unix:!macx|force_pkgconfig {
-    message("Unix build")
+unix:force_pkgconfig {
+    !macx {
+        message("Unix build")
+    }
 
     LIBS += -lyubikey
 
@@ -281,10 +283,11 @@ macx {
 macx:!force_pkgconfig {
     message("Mac build")
 
-    INCLUDEPATH += ../libs/macx/include ../libs/macx/include/ykpers-1
-    LIBS += ../libs/macx/lib/libykpers-1.dylib ../libs/macx/lib/libyubikey.dylib
+    INCLUDEPATH += /opt/homebrew/include /opt/homebrew/include/ykpers-1
+    LIBS += -L/opt/homebrew/lib
+    LIBS += -lyubikey -lykpers-1
 
-    CONFIG += x86_64
+    #CONFIG += x86_64
 
     DEFINES += QT_MAC_USE_COCOA
 
@@ -303,8 +306,8 @@ macx:!force_pkgconfig {
     }
 
     # The application dependencies
-    LIBS += $$_SDK/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
-    LIBS += $$_SDK/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit
+    LIBS += -framework CoreFoundation
+    LIBS += -framework IOKit
 
     # The application executable name
     TARGET = $$APP_NAME
@@ -329,11 +332,11 @@ macx:!force_pkgconfig {
     _LIBDIR = $${_BASEDIR}/Frameworks
     _PLUGINDIR = $${_BASEDIR}/PlugIns
     QMAKE_POST_LINK += $$quote( && mkdir -p $$_LIBDIR && \
-        cp $$_QT_LIBDIR/QtCore.framework/Versions/5/QtCore $$_LIBDIR && \
-        cp $$_QT_LIBDIR/QtGui.framework/Versions/5/QtGui $$_LIBDIR && \
-        cp $$_QT_LIBDIR/QtWidgets.framework/Versions/5/QtWidgets $$_LIBDIR && \
-	cp $$_QT_LIBDIR/QtPrintSupport.framework/Versions/5/QtPrintSupport $$_LIBDIR && \
-	cp $$_QT_LIBDIR/QtDBus.framework/Versions/5/QtDBus $$_LIBDIR && \
+        cp $$_QT_LIBDIR/QtCore.framework/QtCore $$_LIBDIR && \
+        cp $$_QT_LIBDIR/QtGui.framework/QtGui $$_LIBDIR && \
+        cp $$_QT_LIBDIR/QtWidgets.framework/QtWidgets $$_LIBDIR && \
+	cp $$_QT_LIBDIR/QtPrintSupport.framework/QtPrintSupport $$_LIBDIR && \
+	cp $$_QT_LIBDIR/QtDBus.framework/QtDBus $$_LIBDIR && \
         mkdir -p $$_PLUGINDIR/imageformats && \
         cp -R $$_QT_PLUGINDIR/imageformats/libqmng.dylib $$_PLUGINDIR/imageformats && \
 	mkdir -p $$_PLUGINDIR/platforms && \
@@ -341,25 +344,22 @@ macx:!force_pkgconfig {
 
     # copy libykpers and friends
     QMAKE_POST_LINK += $$quote( && mkdir -p $$_LIBDIR && \
-        cp ../libs/macx/lib/libyubikey.0.dylib $$_LIBDIR && \
-        cp ../libs/macx/lib/libykpers-1.1.dylib $$_LIBDIR && \
-        cp ../libs/macx/lib/libjson-c.2.dylib $$_LIBDIR)
+        cp /opt/homebrew/lib/libyubikey.dylib $$_LIBDIR && \
+        cp /opt/homebrew/lib/libykpers-1.dylib $$_LIBDIR && \
+        cp /opt/homebrew/lib/libjson-c.dylib $$_LIBDIR)
 
     _LICENSEDIR = $${_BASEDIR}/licenses
     QMAKE_POST_LINK += $$quote(&& mkdir -p $$_LICENSEDIR && \
         cp ../COPYING $$_LICENSEDIR/yubikey-personalization-gui.txt)
-    for(FILE, LICENSEFILES) {
-        QMAKE_POST_LINK += $$quote(&& cp ../libs/macx/licenses/$${FILE} $$_LICENSEDIR)
-    }
 
     # fixup all library paths..
     _BASE = $$quote(@executable_path/../Frameworks)
     _LIBBASE = $$quote(@executable_path/../lib)
-    _QTCORE = $$quote(@rpath/QtCore.framework/Versions/5/QtCore)
-    _QTGUI = $$quote(@rpath/QtGui.framework/Versions/5/QtGui)
-    _QTWIDGETS = $$quote(@rpath/QtWidgets.framework/Versions/5/QtWidgets)
-    _QTPRINTSUPPORT = $$quote(@rpath/QtPrintSupport.framework/Versions/5/QtPrintSupport)
-    _QTDBUS = $$quote(@rpath/QtDBus.framework/Versions/5/QtDBus)
+    _QTCORE = $$quote(@rpath/QtCore.framework/QtCore)
+    _QTGUI = $$quote(@rpath/QtGui.framework/QtGui)
+    _QTWIDGETS = $$quote(@rpath/QtWidgets.framework/QtWidgets)
+    _QTPRINTSUPPORT = $$quote(@rpath/QtPrintSupport.framework/QtPrintSupport)
+    _QTDBUS = $$quote(@rpath/QtDBus.framework/QtDBus)
     isEmpty(TARGET_ARCH) {
         _INSTALL_NAME_TOOL = install_name_tool
     } else {
@@ -369,13 +369,13 @@ macx:!force_pkgconfig {
         $$_INSTALL_NAME_TOOL -change $$_QTGUI $$_BASE/QtGui $$_BASEDIR/MacOS/$$TARGET_MAC && \
         $$_INSTALL_NAME_TOOL -change $$_QTWIDGETS $$_BASE/QtWidgets $$_BASEDIR/MacOS/$$TARGET_MAC && \
         $$_INSTALL_NAME_TOOL -change $$_QTPRINTSUPPORT $$_BASE/QtPrintSupport $$_BASEDIR/MacOS/$$TARGET_MAC && \
-        $$_INSTALL_NAME_TOOL -change $$_LIBBASE/libykpers-1.1.dylib $$_BASE/libykpers-1.1.dylib $$_BASEDIR/MacOS/$$TARGET_MAC && \
-        $$_INSTALL_NAME_TOOL -change $$_LIBBASE/libyubikey.0.dylib $$_BASE/libyubikey.0.dylib $$_BASEDIR/MacOS/$$TARGET_MAC && \
-        $$_INSTALL_NAME_TOOL -id $$_BASE/libjson-c.2.dylib $$_LIBDIR/libjson-c.2.dylib && \
-        $$_INSTALL_NAME_TOOL -id $$_BASE/libyubikey.0.dylib $$_LIBDIR/libyubikey.0.dylib && \
-        $$_INSTALL_NAME_TOOL -id $$_BASE/libykpers-1.1.dylib $$_LIBDIR/libykpers-1.1.dylib && \
-        $$_INSTALL_NAME_TOOL -change $$_LIBBASE/libyubikey.0.dylib $$_BASE/libyubikey.0.dylib $$_LIBDIR/libykpers-1.1.dylib && \
-        $$_INSTALL_NAME_TOOL -change $$_LIBBASE/libjson-c.2.dylib $$_BASE/libjson-c.2.dylib $$_LIBDIR/libykpers-1.1.dylib && \
+        $$_INSTALL_NAME_TOOL -change $$_LIBBASE/libykpers-1.dylib $$_BASE/libykpers-1.dylib $$_BASEDIR/MacOS/$$TARGET_MAC && \
+        $$_INSTALL_NAME_TOOL -change $$_LIBBASE/libyubikey.dylib $$_BASE/libyubikey.dylib $$_BASEDIR/MacOS/$$TARGET_MAC && \
+        $$_INSTALL_NAME_TOOL -id $$_BASE/libjson-c.dylib $$_LIBDIR/libjson-c.dylib && \
+        $$_INSTALL_NAME_TOOL -id $$_BASE/libyubikey.dylib $$_LIBDIR/libyubikey.dylib && \
+        $$_INSTALL_NAME_TOOL -id $$_BASE/libykpers-1.dylib $$_LIBDIR/libykpers-1.dylib && \
+        $$_INSTALL_NAME_TOOL -change $$_LIBBASE/libyubikey.dylib $$_BASE/libyubikey.dylib $$_LIBDIR/libykpers-1.dylib && \
+        $$_INSTALL_NAME_TOOL -change $$_LIBBASE/libjson-c.dylib $$_BASE/libjson-c.dylib $$_LIBDIR/libykpers-1.dylib && \
         $$_INSTALL_NAME_TOOL -id $$_BASE/QtCore $$_LIBDIR/QtCore && \
         $$_INSTALL_NAME_TOOL -change $$_QTCORE $$_BASE/QtCore $$_LIBDIR/QtGui && \
         $$_INSTALL_NAME_TOOL -id $$_BASE/QtGui $$_LIBDIR/QtGui && \
@@ -433,3 +433,4 @@ win32 {
 } else {
     QMAKE_CLEAN += -r $${DESTDIR}/*
 }
+

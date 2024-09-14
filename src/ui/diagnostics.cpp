@@ -37,6 +37,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <QDateTime>
 #include <QDialogButtonBox>
+#include <QOperatingSystemVersion>
 
 Diagnostics::Diagnostics(QWidget *parent) :
         QDialog(parent),
@@ -86,24 +87,7 @@ QString Diagnostics::osVersion() {
 #ifdef Q_OS_LINUX
     return "Linux";
 #elif defined(Q_OS_MAC)
-    QString mac = "OS X ";
-    switch(QSysInfo::MacintoshVersion) {
-        case QSysInfo::MV_LEOPARD:
-            mac += "Leopard";
-            break;
-        case QSysInfo::MV_SNOWLEOPARD:
-            mac += "SnowLeopard";
-            break;
-        case QSysInfo::MV_LION:
-            mac += "Lion";
-            break;
-        case QSysInfo::MV_MOUNTAINLION:
-            mac += "MountainLion";
-            break;
-        default:
-            mac += "unknown";
-            break;
-    }
+    QString mac = QOperatingSystemVersion::current().name();
     return mac;
 #elif defined(Q_OS_WIN32)
     QString win = "Windows ";

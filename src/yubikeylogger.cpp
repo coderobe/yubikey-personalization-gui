@@ -289,7 +289,7 @@ QString YubiKeyLogger::resolve_eventType(YubiKeyConfig *ykConfig, QString name _
 QString YubiKeyLogger::resolve_timestamp(YubiKeyConfig *ykConfig __attribute__((unused)), QString name) {
         QDateTime ts = QDateTime::currentDateTime();
         if(name == "timestampLocal") {
-            return ts.toString(Qt::SystemLocaleDate);
+            return ts.toString(QLocale::system().dateFormat());
         } else {
             return ts.toString("yyyy-MM-ddThh:mm:ss");
         }

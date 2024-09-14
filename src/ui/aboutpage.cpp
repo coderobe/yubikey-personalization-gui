@@ -62,7 +62,7 @@ AboutPage::AboutPage(QWidget *parent) :
 
     //Set copyright
     QString copyright = tr("%1. %2.").
-                        arg(trUtf8(VER_LEGALCOPYRIGHT)).
+                        arg(QString::fromUtf8(VER_LEGALCOPYRIGHT)).
                         arg(VER_LEGALTRADEMARKS1_STR);
 
     ui->copyrightLbl->setText(copyright);
@@ -99,7 +99,7 @@ void AboutPage::connectButtons() {
     mapper->setMapping(ui->settingsBtn, MainWindow::Page_Settings);
 
     //Connect the mapper
-    connect(mapper, SIGNAL(mapped(int)), this, SLOT(btn_pressed(int)));
+    connect(mapper, SIGNAL(mappedInt(int)), this, SLOT(btn_pressed(int)));
 }
 
 void AboutPage::keyFound(bool found, bool* featuresMatrix) {

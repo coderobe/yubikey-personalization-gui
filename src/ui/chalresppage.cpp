@@ -136,8 +136,8 @@ void ChalRespPage::connectPages() {
     //Connect the mapper to the widget
     //The mapper will set a value to each button and
     //set that value to the widget
-    //connect(pageMapper, SIGNAL(mapped(int)), this, SLOT(setCurrentIndex(int)));
-    connect(mapper, SIGNAL(mapped(int)), this, SLOT(setCurrentPage(int)));
+    //connect(pageMapper, SIGNAL(mappedInt(int)), this, SLOT(setCurrentIndex(int)));
+    connect(mapper, SIGNAL(mappedInt(int)), this, SLOT(setCurrentPage(int)));
 
     //Set the current page
     m_currentPage = 0;
@@ -200,7 +200,7 @@ void ChalRespPage::connectHelpButtons() {
     mapper->setMapping(ui->advSecretKeyHelpBtn, HelpBox::Help_SecretKey);
 
     //Connect the mapper
-    connect(mapper, SIGNAL(mapped(int)), this, SIGNAL(showHelp(int)));
+    connect(mapper, SIGNAL(mappedInt(int)), this, SIGNAL(showHelp(int)));
     connect(ui->quickConfigProtectionBox, SIGNAL(showHelp(int)), this, SIGNAL(showHelp(int)));
     connect(ui->advConfigProtectionBox, SIGNAL(showHelp(int)), this, SIGNAL(showHelp(int)));
 }
@@ -645,7 +645,7 @@ void ChalRespPage::quickUpdateResults(bool written, const QString &msg) {
     //Timestamp...
     QDateTime timstamp = QDateTime::currentDateTime();
     QTableWidgetItem *timeItem = new QTableWidgetItem(
-            tr("%1").arg(timstamp.toString(Qt::SystemLocaleShortDate)));
+            tr("%1").arg(timstamp.toString(QLocale::system().dateFormat(QLocale::ShortFormat))));
     timeItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
     ui->quickResultsWidget->setItem(row, 2, timeItem);
 
@@ -965,7 +965,7 @@ void ChalRespPage::advUpdateResults(bool written, const QString &msg) {
     //Timestamp...
     QDateTime timstamp = QDateTime::currentDateTime();
     QTableWidgetItem *timeItem = new QTableWidgetItem(
-            tr("%1").arg(timstamp.toString(Qt::SystemLocaleShortDate)));
+            tr("%1").arg(timstamp.toString(QLocale::system().dateFormat(QLocale::ShortFormat))));
     timeItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
     ui->advResultsWidget->setItem(row, 2, timeItem);
 

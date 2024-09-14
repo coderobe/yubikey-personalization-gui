@@ -29,8 +29,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "confirmbox.h"
 #include "ui_confirmbox.h"
 
-#include <QMessageBox>
 #include <QSettings>
+#include <QStyle>
 
 #include "common.h"
 
@@ -77,7 +77,7 @@ void ConfirmBox::setConfirmIndex(Confirm confirmIndex) {
 
     this->setWindowTitle(tr("Confirm: %1").arg(title));
 
-    QPixmap question(QMessageBox::standardIcon(QMessageBox::Question));
+    QPixmap question(style()->standardIcon(QStyle::SP_MessageBoxQuestion).pixmap(ui->iconLbl->sizeHint()));
     ui->iconLbl->setPixmap(question);
 
     ui->msgLbl->setText(confirmMsg);

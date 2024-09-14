@@ -40,8 +40,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QDebug>
 #include <QSettings>
 #include <QSignalMapper>
-#include <QRegExpValidator>
+#include <QRegularExpressionValidator>
 #include <QTableWidgetItem>
+#include <QLocale>
 
 #include "us-scanedit.h"
 #include "de-scanedit.h"
@@ -79,11 +80,11 @@ StaticPage::StaticPage(QWidget *parent) :
     ui->quickResultsWidget->resizeColumnsToContents();
     ui->advResultsWidget->resizeColumnsToContents();
 
-    QRegExp rxScan("[A-Fa-f0-9]{,76}");
-    ui->quickScanCodesTxt->setValidator(new QRegExpValidator(rxScan, this));
+    QRegularExpression rxScan("[A-Fa-f0-9]{,76}");
+    ui->quickScanCodesTxt->setValidator(new QRegularExpressionValidator(rxScan, this));
 
-    QRegExp rxText("(\\\\[tn\\\\]|.){,38}");
-    ui->quickStaticTxt->setValidator(new QRegExpValidator(rxText, this));
+    QRegularExpression rxText("(\\\\[tn\\\\]|.){,38}");
+    ui->quickStaticTxt->setValidator(new QRegularExpressionValidator(rxText, this));
 
     scanedit = NULL;
 }
@@ -131,8 +132,8 @@ void StaticPage::connectPages() {
     //Connect the mapper to the widget
     //The mapper will set a value to each button and
     //set that value to the widget
-    //connect(pageMapper, SIGNAL(mapped(int)), this, SLOT(setCurrentIndex(int)));
-    connect(mapper, SIGNAL(mapped(int)), this, SLOT(setCurrentPage(int)));
+    //connect(pageMapper, SIGNAL(mappedInt(int)), this, SLOT(setCurrentIndex(int)));
+    connect(mapper, SIGNAL(mappedInt(int)), this, SLOT(setCurrentPage(int)));
 
     //Set the current page
     m_currentPage = 0;
@@ -187,7 +188,7 @@ void StaticPage::connectHelpButtons() {
     mapper->setMapping(ui->advSecretKeyHelpBtn, HelpBox::Help_SecretKey);
 
     //Connect the mapper
-    connect(mapper, SIGNAL(mapped(int)), this, SIGNAL(showHelp(int)));
+    connect(mapper, SIGNAL(mappedInt(int)), this, SIGNAL(showHelp(int)));
     connect(ui->quickConfigProtectionBox, SIGNAL(showHelp(int)), this, SIGNAL(showHelp(int)));
     connect(ui->advConfigProtectionBox, SIGNAL(showHelp(int)), this, SIGNAL(showHelp(int)));
 }
@@ -643,7 +644,7 @@ void StaticPage::quickUpdateResults(bool written, const QString &msg) {
     //Timestamp...
     QDateTime timstamp = QDateTime::currentDateTime();
     QTableWidgetItem *timeItem = new QTableWidgetItem(
-            tr("%1").arg(timstamp.toString(Qt::SystemLocaleShortDate)));
+            tr("%1").arg(timstamp.toString(QLocale::system().dateFormat(QLocale::ShortFormat))));
     timeItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
     ui->quickResultsWidget->setItem(row, 3, timeItem);
 
@@ -1104,7 +1105,7 @@ void StaticPage::advUpdateResults(bool written, const QString &msg) {
     //Timestamp...
     QDateTime timstamp = QDateTime::currentDateTime();
     QTableWidgetItem *timeItem = new QTableWidgetItem(
-            tr("%1").arg(timstamp.toString(Qt::SystemLocaleShortDate)));
+            tr("%1").arg(timstamp.toString(QLocale::system().dateFormat(QLocale::ShortFormat))));
     timeItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
     ui->advResultsWidget->setItem(row, 4, timeItem);
 
